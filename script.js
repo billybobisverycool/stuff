@@ -1,5 +1,5 @@
 const cosmeticsAPI = 'https://fortnite-api.com/v2/cosmetics/br';
-const shopAPI = 'https://fortnite-api.com/v2/shop';
+const shopAPI = 'https://fortnite-api.com/v2/shop'; // Update this link if different
 
 document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', () => {

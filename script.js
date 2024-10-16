@@ -1,22 +1,38 @@
 const cosmeticsAPI = 'https://fortnite-api.com/v2/cosmetics/br';
-const statsAPI = 'https://fortnite-api.com/v2/stats/br/v2/{accountId}'; // Replace {accountId} with the actual account ID
+const statsAPI = 'https://fortnite-api.com/v2/stats/br/v2/{accountId}';
 
 document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', () => {
         const content = document.getElementById('content');
+        const inputContainer = document.getElementById('inputContainer');
+        
         if (item.id === 'locker') {
+            inputContainer.style.display = 'none'; // Hide input box
             fetchCosmetics(content);
         } else if (item.id === 'stats') {
-            const accountId = prompt("Enter your Fortnite Account ID:");
-            if (accountId) {
-                fetchStats(content, accountId);
-            }
+            inputContainer.style.display = 'block'; // Show input box
+            content.innerHTML = 'Enter your Account ID to see stats!';
+            document.getElementById('accountIdInput').value = ''; // Clear previous input
         } else if (item.id === 'vbucks') {
             content.innerHTML = "You've got V-Bucks!";
+            inputContainer.style.display = 'none'; // Hide input box
         } else if (item.id === 'replays') {
             content.innerHTML = "View your Replays here!";
+            inputContainer.style.display = 'none'; // Hide input box
         }
     });
+});
+
+// Event listener for the submit button
+document.getElementById('submitId').addEventListener('click', () => {
+    const accountId = document.getElementById('accountIdInput').value.trim();
+    if (accountId) {
+        document.getElementById('inputContainer').style.opacity = 0; // Fade out input container
+        setTimeout(() => {
+            document.getElementById('inputContainer').style.display = 'none'; // Hide input after fade
+            fetchStats(document.getElementById('content'), accountId);
+        }, 500); // Match timeout with CSS transition duration
+    }
 });
 
 async function fetchCosmetics(content) {

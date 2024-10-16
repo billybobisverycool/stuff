@@ -31,3 +31,31 @@ body {
     padding: 20px;
     text-align: center;
 }
+
+.shop-items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.shop-item {
+    background-color: #2b2b2b;
+    border: 1px solid #4b4b4b;
+    border-radius: 8px;
+    margin: 10px;
+    padding: 15px;
+    width: 150px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.shop-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.shop-item:hover {
+    transform: scale(1.05);
+}
+

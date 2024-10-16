@@ -1,22 +1,20 @@
 const cosmeticsAPI = 'https://fortnite-api.com/v2/cosmetics/br';
-const shopAPI = 'https://fortnite-api.com/v2/shop'; // Update this link if different
+const statsAPI = 'https://fortnite-api.com/v2/stats/br/v2/{accountId}'; // Replace {accountId} with the actual account ID
 
 document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', () => {
         const content = document.getElementById('content');
-        switch (item.id) {
-            case 'locker':
-                fetchCosmetics(content);
-                break;
-            case 'shop':
-                fetchShopItems(content);
-                break;
-            case 'vbucks':
-                content.innerHTML = "You've got V-Bucks!";
-                break;
-            case 'replays':
-                content.innerHTML = "View your Replays here!";
-                break;
+        if (item.id === 'locker') {
+            fetchCosmetics(content);
+        } else if (item.id === 'stats') {
+            const accountId = prompt("Enter your Fortnite Account ID:");
+            if (accountId) {
+                fetchStats(content, accountId);
+            }
+        } else if (item.id === 'vbucks') {
+            content.innerHTML = "You've got V-Bucks!";
+        } else if (item.id === 'replays') {
+            content.innerHTML = "View your Replays here!";
         }
     });
 });
@@ -51,31 +49,30 @@ async function fetchCosmetics(content) {
     }
 }
 
-async function fetchShopItems(content) {
+async function fetchStats(content, accountId) {
+    const url = statsAPI.replace('{accountId}', accountId);
     try {
-        const response = await fetch(shopAPI);
+        const response = await fetch(url);
         if (!response.ok) throw new Error('Network response was not ok');
 
         const data = await response.json();
-        const items = data.data;
+        const stats = data.data;
 
-        if (items.length === 0) {
-            content.innerHTML = `<h2>No items available in the shop</h2>`;
+        if (!stats) {
+            content.innerHTML = `<h2>No stats available for this account</h2>`;
             return;
         }
 
-        content.innerHTML = `<h2>Shop</h2>`;
-        const itemsList = items.map(item => `
-            <div class="shop-item">
-                <img src="${item.images.icon}" alt="${item.name}">
-                <p>${item.name}</p>
-                <p>Price: ${item.price} V-Bucks</p>
-            </div>
-        `).join('');
-
-        content.innerHTML += `<div class="shop-items">${itemsList}</div>`;
+        // Example of displaying some stats
+        content.innerHTML = `<h2>Stats for Account ID: ${accountId}</h2>
+            <ul>
+                <li>Wins: ${stats.total.wins}</li>
+                <li>Matches Played: ${stats.total.matches}</li>
+                <li>Kills: ${stats.total.kills}</li>
+                <li>K/D Ratio: ${stats.total.kdRatio.toFixed(2)}</li>
+            </ul>`;
     } catch (error) {
-        content.innerHTML = `<h2>Error fetching shop items</h2>`;
-        console.error('Error fetching shop items:', error);
+        content.innerHTML = `<h2>Error fetching stats</h2>`;
+        console.error('Error fetching stats:', error);
     }
 }

@@ -4,10 +4,8 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+const blockSize = 50;
 const blocks = [];
-const blockSize = 50; // Size of the block
-
-// Player properties
 const player = {
     x: canvas.width / 2,
     y: canvas.height / 2,
@@ -18,7 +16,9 @@ const player = {
     gravity: 1,
     jumpStrength: 15,
     velocityY: 0,
-    grounded: false
+    grounded: false,
+    inventory: [],
+    selectedBlock: 'green'
 };
 
 // Simple block structure
@@ -78,6 +78,40 @@ function handlePlayerMovement() {
     }
 }
 
+// Handle block placement and breaking
+function handleBlockInteraction() {
+    const mouse = { x: 0, y: 0 };
+    canvas.addEventListener('mousemove', (event) => {
+        mouse.x = event.clientX;
+        mouse.y = event.clientY;
+    });
+
+    canvas.addEventListener('mousedown', (event) => {
+        const gridX = Math.floor(mouse.x / blockSize) * blockSize;
+        const gridY = Math.floor(mouse.y / blockSize) * blockSize;
+
+        // Check if breaking a block
+        const blockIndex = blocks.findIndex(block => block.x === gridX && block.y === gridY);
+        if (blockIndex !== -1) {
+            // Remove block and add to inventory
+            player.inventory.push(blocks[blockIndex].color);
+            blocks.splice(blockIndex, 1);
+        } else {
+            // Place block
+            const newBlock = new Block(gridX, gridY, player.selectedBlock);
+            blocks.push(newBlock);
+        }
+    });
+}
+
+// Draw inventory
+function drawInventory() {
+    ctx.fillStyle = 'black';
+    ctx.fillRect(10, 10, 200, 50);
+    ctx.fillStyle = 'white';
+    ctx.fillText('Inventory: ' + player.inventory.join(', '), 15, 30);
+}
+
 // Game loop
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
@@ -94,6 +128,8 @@ function gameLoop() {
     ctx.fillRect(player.x + player.width, player.y + 10, 10, 10); // Right hand
 
     handlePlayerMovement();
+    handleBlockInteraction();
+    drawInventory();
 
     requestAnimationFrame(gameLoop); // Loop
 }

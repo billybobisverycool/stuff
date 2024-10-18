@@ -1,56 +1,35 @@
-* {
-    box-sizing: border-box;
-}
-
 body {
     margin: 0;
-    font-family: 'Minecraft', sans-serif; /* Use a Minecraft-like font if available */
-    background: url('https://www.minecraft.net/content/dam/games/minecraft/hero/minecraft-splash.jpg') no-repeat center center fixed;
-    background-size: cover;
-    color: #ffffff;
-}
-
-.menu {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    background: rgba(0, 0, 0, 0.85);
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
-}
-
-h1 {
-    font-size: 64px;
-    margin-bottom: 30px;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-}
-
-.button-container {
+    background-color: #2E2E2E; /* Dark gray background */
+    font-family: 'Minecraft', sans-serif; /* Use a pixel-style font */
     display: flex;
-    flex-direction: column;
-    gap: 10px; /* Space between buttons */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
-button {
-    background-color: #5C9E30;
+.menu-container {
+    text-align: center;
+}
+
+.logo {
+    width: 300px; /* Adjust based on your logo size */
+    margin-bottom: 20px;
+}
+
+.menu-button {
+    background-color: #7D7D7D;
+    color: #FFFFFF;
     border: none;
-    border-radius: 5px;
-    color: white;
-    font-size: 24px;
-    padding: 15px 30px;
+    padding: 10px 20px;
+    border-radius: 5px; /* Rounded corners */
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    width: 100%; /* Full width for buttons */
+    text-align: center;
+    margin: 10px 0;
+    transition: background-color 0.3s;
+    font-size: 18px; /* Adjust for readability */
 }
 
-button:hover {
-    background-color: #4A7D26;
-    transform: scale(1.05);
-}
-
-button:active {
-    transform: scale(0.95);
+.menu-button:hover {
+    background-color: #A9A9A9; /* Lighter gray on hover */
 }

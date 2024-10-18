@@ -3,22 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Guessing Game</title>
     <link rel="stylesheet" href="styles.css">
-    <title>Fortnite UI - Locker</title>
 </head>
 <body>
-    <div class="navbar">
-        <div class="nav-item" id="locker">Locker</div>
-        <div class="nav-item" id="stats">Stats</div>
-        <div class="nav-item" id="vbucks">V-Bucks</div>
-        <div class="nav-item" id="replays">Replays</div>
-    </div>
-    <div class="content" id="content">
-        Welcome to Fortnite!
-    </div>
-    <div class="input-container" id="inputContainer" style="display: none;">
-        <input type="text" id="accountIdInput" placeholder="Enter your Account ID">
-        <button id="submitId">Enter</button>
+    <div class="container">
+        <h1>Password Guessing Game</h1>
+        <p id="clue">Guess the password based on the clues.</p>
+        <input type="text" id="guess" placeholder="Your guess here">
+        <button id="submit">Submit Guess</button>
+        <p id="feedback"></p>
     </div>
     <script src="script.js"></script>
 </body>

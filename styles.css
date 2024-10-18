@@ -1,6 +1,10 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
-    font-family: 'Minecraft', sans-serif;
+    font-family: 'Minecraft', sans-serif; /* Use a Minecraft-like font if available */
     background: url('https://www.minecraft.net/content/dam/games/minecraft/hero/minecraft-splash.jpg') no-repeat center center fixed;
     background-size: cover;
     color: #ffffff;
@@ -12,14 +16,22 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 20px;
+    background: rgba(0, 0, 0, 0.85);
+    padding: 40px;
     border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
 }
 
 h1 {
-    font-size: 48px;
-    margin-bottom: 20px;
+    font-size: 64px;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between buttons */
 }
 
 button {
@@ -28,12 +40,17 @@ button {
     border-radius: 5px;
     color: white;
     font-size: 24px;
-    padding: 10px 20px;
-    margin: 10px 0;
+    padding: 15px 30px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 100%; /* Full width for buttons */
 }
 
 button:hover {
     background-color: #4A7D26;
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
 }

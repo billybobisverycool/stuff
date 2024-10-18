@@ -1,138 +1,102 @@
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+// Set up scene, camera, and renderer
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gameCanvas'), alpha: true });
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
-const blockSize = 50;
+// Create a basic ground
+const planeGeometry = new THREE.PlaneGeometry(500, 500);
+const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide });
+const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+plane.rotation.x = -Math.PI / 2;
+scene.add(plane);
+
+// Create blocks
+const blockSize = 1;
 const blocks = [];
-const player = {
-    x: canvas.width / 2,
-    y: canvas.height / 2,
-    width: 30,
-    height: 60,
-    color: 'blue',
-    speed: 5,
-    gravity: 1,
-    jumpStrength: 15,
-    velocityY: 0,
-    grounded: false,
-    inventory: [],
-    selectedBlock: 'green'
-};
+function createBlock(x, z) {
+    const geometry = new THREE.BoxGeometry(blockSize, blockSize, blockSize);
+    const material = new THREE.MeshBasicMaterial({ color: 0x8B4513 }); // Brown color
+    const block = new THREE.Mesh(geometry, material);
+    block.position.set(x * blockSize, blockSize / 2, z * blockSize);
+    blocks.push(block);
+    scene.add(block);
+}
 
-// Simple block structure
-class Block {
-    constructor(x, y, color) {
-        this.x = x;
-        this.y = y;
-        this.color = color;
-    }
-    
-    draw() {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, blockSize, blockSize);
+// Create a grid of blocks
+for (let i = -5; i < 5; i++) {
+    for (let j = -5; j < 5; j++) {
+        createBlock(i, j);
     }
 }
 
-// Initialize the world with some blocks
-function init() {
-    for (let i = 0; i < 10; i++) {
-        for (let j = 0; j < 10; j++) {
-            const block = new Block(i * blockSize, j * blockSize, 'green');
-            blocks.push(block);
-        }
+// Set up player
+const controls = new THREE.PointerLockControls(camera, document.body);
+scene.add(controls.getObject());
+document.body.addEventListener('click', () => {
+    controls.lock();
+});
+
+// Movement variables
+const movementSpeed = 0.1;
+let velocity = new THREE.Vector3();
+let canJump = false;
+
+// Event listeners for movement
+const keyState = {};
+window.addEventListener('keydown', (event) => {
+    keyState[event.code] = true;
+});
+window.addEventListener('keyup', (event) => {
+    keyState[event.code] = false;
+});
+
+// Animation loop
+function animate() {
+    requestAnimationFrame(animate);
+
+    if (keyState['KeyW']) {
+        velocity.z = -movementSpeed;
+    } else if (keyState['KeyS']) {
+        velocity.z = movementSpeed;
+    } else {
+        velocity.z = 0;
     }
-}
 
-// Handle player movement and physics
-function handlePlayerMovement() {
-    const keys = {};
-
-    window.addEventListener('keydown', (e) => {
-        keys[e.code] = true;
-    });
-    window.addEventListener('keyup', (e) => {
-        keys[e.code] = false;
-    });
-
-    // Horizontal movement
-    if (keys['KeyA']) player.x -= player.speed;
-    if (keys['KeyD']) player.x += player.speed;
-
-    // Jumping
-    if (keys['Space'] && player.grounded) {
-        player.velocityY = -player.jumpStrength;
-        player.grounded = false;
+    if (keyState['KeyA']) {
+        velocity.x = -movementSpeed;
+    } else if (keyState['KeyD']) {
+        velocity.x = movementSpeed;
+    } else {
+        velocity.x = 0;
     }
 
-    // Apply gravity
-    player.velocityY += player.gravity;
-    player.y += player.velocityY;
-
-    // Ground check
-    if (player.y + player.height >= canvas.height) {
-        player.y = canvas.height - player.height; // Reset position to ground
-        player.velocityY = 0;
-        player.grounded = true;
+    if (canJump && keyState['Space']) {
+        velocity.y = 0.5; // Jump
+        canJump = false;
     }
+
+    velocity.y -= 0.01; // Gravity
+
+    controls.getObject().position.add(velocity);
+
+    // Ground collision check
+    if (controls.getObject().position.y < blockSize / 2) {
+        controls.getObject().position.y = blockSize / 2;
+        canJump = true;
+    }
+
+    renderer.render(scene, camera);
 }
 
-// Handle block placement and breaking
-function handleBlockInteraction() {
-    const mouse = { x: 0, y: 0 };
-    canvas.addEventListener('mousemove', (event) => {
-        mouse.x = event.clientX;
-        mouse.y = event.clientY;
-    });
+// Resize the renderer on window resize
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
 
-    canvas.addEventListener('mousedown', (event) => {
-        const gridX = Math.floor(mouse.x / blockSize) * blockSize;
-        const gridY = Math.floor(mouse.y / blockSize) * blockSize;
-
-        // Check if breaking a block
-        const blockIndex = blocks.findIndex(block => block.x === gridX && block.y === gridY);
-        if (blockIndex !== -1) {
-            // Remove block and add to inventory
-            player.inventory.push(blocks[blockIndex].color);
-            blocks.splice(blockIndex, 1);
-        } else {
-            // Place block
-            const newBlock = new Block(gridX, gridY, player.selectedBlock);
-            blocks.push(newBlock);
-        }
-    });
-}
-
-// Draw inventory
-function drawInventory() {
-    ctx.fillStyle = 'black';
-    ctx.fillRect(10, 10, 200, 50);
-    ctx.fillStyle = 'white';
-    ctx.fillText('Inventory: ' + player.inventory.join(', '), 15, 30);
-}
-
-// Game loop
-function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
-
-    // Draw all blocks
-    blocks.forEach(block => block.draw());
-
-    // Draw the player
-    ctx.fillStyle = player.color;
-    ctx.fillRect(player.x, player.y, player.width, player.height);
-
-    // Draw player's right hand
-    ctx.fillStyle = 'red'; // Hand color
-    ctx.fillRect(player.x + player.width, player.y + 10, 10, 10); // Right hand
-
-    handlePlayerMovement();
-    handleBlockInteraction();
-    drawInventory();
-
-    requestAnimationFrame(gameLoop); // Loop
-}
-
-init();
-gameLoop();
+// Start the animation loop
+animate();

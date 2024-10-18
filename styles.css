@@ -1,8 +1,39 @@
 body {
     margin: 0;
-    overflow: hidden;
+    font-family: 'Minecraft', sans-serif;
+    background: url('https://www.minecraft.net/content/dam/games/minecraft/hero/minecraft-splash.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #ffffff;
 }
 
-canvas {
-    display: block;
+.menu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+button {
+    background-color: #5C9E30;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 24px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #4A7D26;
 }
